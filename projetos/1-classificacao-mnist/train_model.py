@@ -87,5 +87,5 @@ print(f"\nAcuracia de validacao final: {val_accuracy_final * 100:.2f}%")
 test_loss, test_acc = model.evaluate(x_test, y_test)
 print(f"Acuracia no teste: {test_acc * 100:.2f}%")
 
-model.save("model.h5")
+model.save("model.h5", save_format="h5")
 print("Modelo salvo como model.h5")
