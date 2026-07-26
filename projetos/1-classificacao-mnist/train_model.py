@@ -1,6 +1,9 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import matplotlib
+matplotlib.use("Agg")  # backend sem interface grafica, pra rodar sem tela
+import matplotlib.pyplot as plt
 
 # ---------------------------------------------------------------------------
 # Projeto 1 — Classificação MNIST
@@ -86,6 +89,35 @@ print(f"\nAcuracia de validacao final: {val_accuracy_final * 100:.2f}%")
 # conferindo tambem no conjunto de teste (dado que o modelo nunca viu)
 test_loss, test_acc = model.evaluate(x_test, y_test)
 print(f"Acuracia no teste: {test_acc * 100:.2f}%")
+
+# grafico da curva de treino (acuracia e perda por epoca), so pra
+# visualizar se o modelo esta convergindo bem ou com sinais de overfitting.
+# protegido com try/except pra nunca travar o script principal por causa
+# disso -- o que realmente importa (salvar o model.h5) roda de qualquer jeito
+try:
+    plt.figure(figsize=(10, 4))
+
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history["accuracy"], label="treino")
+    plt.plot(history.history["val_accuracy"], label="validacao")
+    plt.xlabel("epoca")
+    plt.ylabel("acuracia")
+    plt.title("Acuracia por epoca")
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history["loss"], label="treino")
+    plt.plot(history.history["val_loss"], label="validacao")
+    plt.xlabel("epoca")
+    plt.ylabel("perda")
+    plt.title("Perda por epoca")
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig("training_curve.png", dpi=120)
+    print("Grafico de treino salvo como training_curve.png")
+except Exception as e:
+    print(f"Aviso: nao foi possivel salvar o grafico de treino ({e})")
 
 model.save("model.h5", save_format="h5")
 print("Modelo salvo como model.h5")

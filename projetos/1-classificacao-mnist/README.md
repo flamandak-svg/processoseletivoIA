@@ -105,13 +105,18 @@ Depois de treinar, converti o modelo do formato .h5 pra .tflite (TensorFlow Lite
 
 ### 4️⃣ Resultados Obtidos
 
-Acurácia de validação final: 98.82%
-Acurácia no teste: 98.94%
+Acurácia de validação final: 99.05%
+Acurácia no teste: 99.13%
 Tamanho do model.h5: 2913.79 KB
 Tamanho do model.tflite: 247.73 KB
 Redução de tamanho: 91.5%
 
-Além da acurácia agregada, gerei a matriz de confusão completa no conjunto de teste. A maior confusão do modelo foi entre os dígitos 3 e 5 (15 casos), seguida por 6 e 4 (13 casos). Isso faz sentido visualmente: um "3" com o traço central menos definido pode se parecer com um "5", e um "6" com o laço inferior mal fechado pode lembrar um "4". Fora esses pares, o modelo tem pouquíssima confusão entre as demais classes: a diagonal principal concentra a grande maioria das previsões (por exemplo, 1133 dos 1135 dígitos "1" foram classificados corretamente).
+Além da acurácia agregada, gerei a matriz de confusão completa no conjunto de teste:
+
+![Curva de treino](training_curve.png)
+![Exemplos classificados incorretamente](misclassified_examples.png)
+
+A maior confusão do modelo foi entre os dígitos 3 e 5 (11 casos), seguida por 2 e 7 (8 casos), 9 e 4, 7 e 1 e 3 e 7 (6 casos cada). Isso faz sentido visualmente. Por exemplo, um "3" com o traço central mal definido pode se parecer com um "5". Fora esses pares, o modelo erra pouco nas demais classes.
 
 ### 5️⃣ Comentários Adicionais (Opcional)
 
@@ -128,4 +133,4 @@ Amostra 3: predito=1 | real=1
 Amostra 4: predito=0 | real=0
 Amostra 5: predito=4 | real=4
 
-O modelo acertou as 5 amostras testadas. Para encontrar um caso mais interessante que essas 5 primeiras (que são bem fáceis para o modelo), busquei entre as primeiras 200 amostras do conjunto de teste aquela com a menor margem de confiança entre a primeira e a segunda classe mais provável. Encontrei a amostra 78: o modelo acertou (real=9, predito=9), mas com apenas 61% de confiança, contra 36% para a segunda opção (dígito 8). Isso bate com o que já apareceu na matriz de confusão: 9 e 8 têm formas visuais parecidas (ambos com uma curva fechada na parte superior), então faz sentido que o modelo "hesite" mais nesse tipo de caso, mesmo acertando no final.
+O modelo acertou as 5 amostras testadas. Para encontrar um caso mais interessante, busquei entre as primeiras 200 amostras aquela com a menor margem de confiança. Encontrei a amostra 18: o modelo errou (real=3, predito=5), com 65% de confiança no 5 contra apenas 30% no 3 correto. Esse erro bate exatamente com a maior confusão encontrada na matriz de confusão (3↔5), confirmando que o modelo tem uma dificuldade real e consistente em diferenciar esses dois dígitos, provavelmente por semelhança visual quando o traço central do 3 é escrito de forma mais arredondada.
