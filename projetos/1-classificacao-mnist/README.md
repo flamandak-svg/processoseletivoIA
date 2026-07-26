@@ -91,7 +91,7 @@ projetos/1-classificacao-mnist/
 
 Construí uma CNN com 3 blocos convolucionais. Cada bloco tem uma camada Conv2D (com 32, 64 e 128 filtros, em cada bloco respectivamente) com ativação ReLU, seguida de uma BatchNormalization (ajuda a deixar o treino mais estável) e um MaxPooling2D (reduz o tamanho da imagem, mantendo só a informação mais importante).
 Depois dos blocos convolucionais, achato tudo com uma camada Flatten e passo por uma Dense de 128 neurônios. Antes da saída, uso um Dropout de 0.3, que desliga 30% dos neurônios aleatoriamente durante o treino pra evitar que o modelo decore demais os dados (overfitting). A camada final é uma Dense de 10 neurônios com softmax, uma para cada dígito (0 a 9).
-Para treinar, separei 10% dos dados de treino pra validação (validation_split=0.1) e usei EarlyStopping monitorando a perda de validação (val_loss), com paciência de 3 épocas, ou seja, se o modelo parar de melhorar por 3 épocas seguidas, o treino para sozinho. Deixei o limite máximo em 15 épocas.
+Para treinar, separei 10% dos dados de treino pra validação (validation_split=0.1) e usei EarlyStopping monitorando a perda de validação (val_loss), com paciência de 3 épocas, ou seja, se o modelo parar de melhorar por 3 épocas seguidas, o treino para sozinho. Deixei o limite máximo em 15 épocas. Escolhi 3 blocos ao invés de 4 porque o MNIST é um problema relativamente simples (imagens pequenas, preto e branco); um quarto bloco reduziria demais a imagem antes do Flatten sem ganho real de acurácia. O Dropout de 0.3 foi uma escolha intermediária: valores mais altos (tipo 0.5) tendem a atrapalhar a convergência em datasets já fáceis como o MNIST, e valores muito baixos não ajudam contra overfitting. A paciência de 3 épocas no EarlyStopping evita parar cedo demais por uma flutuação pontual do treino, sem deixar rodar tempo demais à toa.
 
 ### 2️⃣ Bibliotecas Utilizadas
 
@@ -111,6 +111,8 @@ Tamanho do model.h5: 2913.79 KB
 Tamanho do model.tflite: 247.73 KB
 Redução de tamanho: 91.5%
 
+Além da acurácia agregada, gerei a matriz de confusão completa no conjunto de teste. A maior confusão do modelo foi entre os dígitos 3 e 5 (15 casos), seguida por 6 e 4 (13 casos). Isso faz sentido visualmente: um "3" com o traço central menos definido pode se parecer com um "5", e um "6" com o laço inferior mal fechado pode lembrar um "4". Fora esses pares, o modelo tem pouquíssima confusão entre as demais classes: a diagonal principal concentra a grande maioria das previsões (por exemplo, 1133 dos 1135 dígitos "1" foram classificados corretamente).
+
 ### 5️⃣ Comentários Adicionais (Opcional)
 
 A maior dificuldade foi um bug de compatibilidade: o requirements.txt original pedia tensorflow>=2.12, sem limite de versão. Isso instalava a versão 2.21.0 (que usa o Keras 3), e essa versão dava erro ao tentar carregar de volta o model.h5 (um erro no inicializador GlorotUniform, algo interno da própria biblioteca).
@@ -126,4 +128,4 @@ Amostra 3: predito=1 | real=1
 Amostra 4: predito=0 | real=0
 Amostra 5: predito=4 | real=4
 
-O modelo acertou as 5 amostras testadas.
+O modelo acertou as 5 amostras testadas. Para encontrar um caso mais interessante que essas 5 primeiras (que são bem fáceis para o modelo), busquei entre as primeiras 200 amostras do conjunto de teste aquela com a menor margem de confiança entre a primeira e a segunda classe mais provável. Encontrei a amostra 78: o modelo acertou (real=9, predito=9), mas com apenas 61% de confiança, contra 36% para a segunda opção (dígito 8). Isso bate com o que já apareceu na matriz de confusão: 9 e 8 têm formas visuais parecidas (ambos com uma curva fechada na parte superior), então faz sentido que o modelo "hesite" mais nesse tipo de caso, mesmo acertando no final.
