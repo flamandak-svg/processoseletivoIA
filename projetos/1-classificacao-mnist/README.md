@@ -119,6 +119,7 @@ Resolvi fixando a versão em tensorflow==2.15.0 no requirements.txt. Depois de r
 ### 6️⃣ Exemplo de Inferência
 
 Resultado ao rodar o run_inference.py usando o modelo otimizado (model.tflite):
+
 Amostra 1: predito=7 | real=7
 Amostra 2: predito=2 | real=2
 Amostra 3: predito=1 | real=1
