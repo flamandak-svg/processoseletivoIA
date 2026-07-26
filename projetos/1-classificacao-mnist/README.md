@@ -85,28 +85,44 @@ projetos/1-classificacao-mnist/
 
 ## 📝 Relatório do Candidato
 
-👤 **Nome Completo:**
+👤 **Nome Completo: Amanda Kellen Farias Lopes**
 
 ### 1️⃣ Resumo da Arquitetura do Modelo
 
-Descreva, em palavras, a arquitetura da CNN implementada em `train_model.py` (número de blocos convolucionais, uso de batch normalization/dropout, estratégia de validação/early stopping).
+Construí uma CNN com 3 blocos convolucionais. Cada bloco tem uma camada Conv2D (com 32, 64 e 128 filtros, em cada bloco respectivamente) com ativação ReLU, seguida de uma BatchNormalization (ajuda a deixar o treino mais estável) e um MaxPooling2D (reduz o tamanho da imagem, mantendo só a informação mais importante).
+Depois dos blocos convolucionais, achato tudo com uma camada Flatten e passo por uma Dense de 128 neurônios. Antes da saída, uso um Dropout de 0.3, que desliga 30% dos neurônios aleatoriamente durante o treino pra evitar que o modelo decore demais os dados (overfitting). A camada final é uma Dense de 10 neurônios com softmax, uma para cada dígito (0 a 9).
+Para treinar, separei 10% dos dados de treino pra validação (validation_split=0.1) e usei EarlyStopping monitorando a perda de validação (val_loss), com paciência de 3 épocas, ou seja, se o modelo parar de melhorar por 3 épocas seguidas, o treino para sozinho. Deixei o limite máximo em 15 épocas.
 
 ### 2️⃣ Bibliotecas Utilizadas
 
-Liste as principais bibliotecas utilizadas, preferencialmente com suas versões.
+TensorFlow 2.15.0
+Keras 2.15.0
+NumPy 1.26.x
 
 ### 3️⃣ Técnica de Otimização do Modelo
 
-Explique qual técnica foi utilizada para otimizar o modelo em `optimize_model.py`.
+Depois de treinar, converti o modelo do formato .h5 pra .tflite (TensorFlow Lite), formato mais leve pra rodar em dispositivos com pouca memória. A técnica usada foi a quantização de alcance dinâmico (tf.lite.Optimize.DEFAULT), que reduz a precisão dos pesos do modelo (de números de 32 bits pra 8 bits), deixando o arquivo bem menor sem perder muita qualidade.
 
 ### 4️⃣ Resultados Obtidos
 
-Informe a acurácia de validação obtida e o tamanho dos arquivos `model.h5` e `model.tflite`.
+Acurácia de validação final: 98.82%
+Acurácia no teste: 98.94%
+Tamanho do model.h5: 2913.79 KB
+Tamanho do model.tflite: 247.73 KB
+Redução de tamanho: 91.5%
 
 ### 5️⃣ Comentários Adicionais (Opcional)
 
-Dificuldades encontradas, decisões técnicas importantes, limitações do modelo, aprendizados durante o desafio.
+A maior dificuldade foi um bug de compatibilidade: o requirements.txt original pedia tensorflow>=2.12, sem limite de versão. Isso instalava a versão 2.21.0 (que usa o Keras 3), e essa versão dava erro ao tentar carregar de volta o model.h5 (um erro no inicializador GlorotUniform, algo interno da própria biblioteca).
+Resolvi fixando a versão em tensorflow==2.15.0 no requirements.txt. Depois de retreinar e reenviar, os arquivos foram gerados normalmente e o GitHub Actions passou.
 
 ### 6️⃣ Exemplo de Inferência
 
-Cole a saída do terminal ao rodar `run_inference.py` (predito vs. real para as 5+ amostras), e comente brevemente se houve algum caso interessante (acerto ou erro) entre as amostras testadas.
+Resultado ao rodar o run_inference.py usando o modelo otimizado (model.tflite):
+Amostra 1: predito=7 | real=7
+Amostra 2: predito=2 | real=2
+Amostra 3: predito=1 | real=1
+Amostra 4: predito=0 | real=0
+Amostra 5: predito=4 | real=4
+
+O modelo acertou as 5 amostras testadas.
