@@ -122,6 +122,7 @@ A maior confusão do modelo foi entre os dígitos 3 e 5 (11 casos), seguida por 
 
 A maior dificuldade foi um bug de compatibilidade: o requirements.txt original pedia tensorflow>=2.12, sem limite de versão. Isso instalava a versão 2.21.0 (que usa o Keras 3), e essa versão dava erro ao tentar carregar de volta o model.h5 (um erro no inicializador GlorotUniform, algo interno da própria biblioteca).
 Resolvi fixando a versão em tensorflow==2.15.0 no requirements.txt. Depois de retreinar e reenviar, os arquivos foram gerados normalmente e o GitHub Actions passou.
+Limitações: a quantização que usei (Optimize.DEFAULT) reduz só os pesos do modelo pra 8 bits, mas as contas durante a inferência continuam em float. Dá pra reduzir ainda mais usando quantização inteira completa, só que aí eu precisaria passar um conjunto de dados de exemplo na hora de converter. Outra coisa: pra um problema simples como o MNIST, meu modelo ainda é grande (32/64/128 filtros). Se fosse rodar num microcontrolador com pouca memória, eu testaria reduzir esses números pra ver se a acurácia continua boa, já que em Edge AI o objetivo é o menor modelo que resolve, não o mais preciso.
 
 ### 6️⃣ Exemplo de Inferência
 
