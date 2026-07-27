@@ -95,9 +95,9 @@ Para treinar, separei 10% dos dados de treino pra validação (validation_split=
 
 ### 2️⃣ Bibliotecas Utilizadas
 
-TensorFlow 2.15.0
-Keras 2.15.0
-NumPy 1.26.x
+- TensorFlow 2.15.0
+- Keras 2.15.0
+- NumPy 1.26.x
 
 ### 3️⃣ Técnica de Otimização do Modelo
 
@@ -105,11 +105,11 @@ Depois de treinar, converti o modelo do formato .h5 pra .tflite (TensorFlow Lite
 
 ### 4️⃣ Resultados Obtidos
 
-Acurácia de validação final: 99.05%
-Acurácia no teste: 99.13%
-Tamanho do model.h5: 2913.79 KB
-Tamanho do model.tflite: 247.73 KB
-Redução de tamanho: 91.5%
+- Acurácia de validação final: 99.05%
+- Acurácia no teste: 99.13%
+- Tamanho do model.h5: 2913.79 KB
+- Tamanho do model.tflite: 247.73 KB
+- Redução de tamanho: 91.5%
 
 Além da acurácia agregada, gerei a matriz de confusão completa no conjunto de teste:
 
